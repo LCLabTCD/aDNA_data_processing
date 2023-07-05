@@ -7,11 +7,12 @@ List of scripts and purpose:
 seqPro_v7.py
 
 ## Alignment Processing
-BamBams_v6.py
+BamBams_v6.py  
 filter_bam.py
 
 ## Metagenomic analysis
-metascreen.py
+
+metascreen.py  
 edit_dist.R # check microbial alignments
 
 ## Pseudohaploid SNP Calling
