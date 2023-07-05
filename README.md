@@ -8,7 +8,8 @@ seqPro_v7.py
 
 ## Alignment Processing
 BamBams_v6.py  
-filter_bam.py
+filter_bam.py  
+softclip.py
 
 ## Metagenomic analysis
 
