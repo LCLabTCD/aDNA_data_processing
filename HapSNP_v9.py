@@ -13,7 +13,7 @@ v9 21.02.2022 - multiple types of SNPCAP data (1240k, 390k etc.) now accounted f
 
 USAGE
 
-usage: HapSNP_v5.py [-h] -data DATASET -I LIST_OF_BAMS [-R REF] [-p PARALLEL]
+usage: HapSNP_v9.py [-h] -data DATASET -I LIST_OF_BAMS [-R REF] [-p PARALLEL]
                     [-o OUTPUT_MERGE_FILE] [-mq MAPPING_QUAL] [-bp BP_LENGTH]
                     [-mem JAVA_MEM] [-gatk PATH_GATK]
 DESCRIPTION

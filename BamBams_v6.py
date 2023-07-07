@@ -6,7 +6,7 @@ BamBams.py : Final BAM Merging, Processing and Basic Statistics
 
 Lara Cassidy
 
-usage: BamBams_v5.py [-h] [-mq MAPPING_QUAL] [-bp READ_BP_LENGTH]
+usage: BamBams_v6.py [-h] [-mq MAPPING_QUAL] [-bp READ_BP_LENGTH]
                      [-clip SOFTCLIP] [-R REF] [-mem JAVA_MEM] [-p PARALLEL]
                      [-op OP_DUP] [-i BAMLIST] [-o OUTDIR]
 
@@ -102,7 +102,8 @@ parser.add_argument("-mem","--java_mem",help="Java memory for merging [25]",type
 parser.add_argument("-p","--parallel",help="Number of samples to run in parallel - includes bwa samse/sampe but not aln [10]",type=int,default=10)
 parser.add_argument("-op","--op_dup",help="optical duplicate distance (default: 100). Please change to 2500 manually if duplicates from a NovaSeq, HiSeqX or HiSeq4000 are being removed",type=int,default=100)
 parser.add_argument("-tcd","--tcd_labels",help="Does data follow the TCD labelling system? [Y]",default="Y")
-
+parser.add_argument("-gatk","--gatk", help="Path to gatk jarfile", default = "/Software/GenomeAnalysisTK.jar")
+parser.add_argument("-picard","--picard", help="Path to picard jarfile", default = "/Software/picard.jar")
 
 
 #REQUIRED NO DEFALUTS
@@ -127,9 +128,10 @@ Genome_Name = path_to_genome.split('/')[-1].split('.')[0]
 ref_check = "/".join(path_to_genome.split('/')[0:-1])
 Genome_Length = int(subprocess.check_output("cat " + path_to_genome + "*fai | awk '{SUM+=$2}END{print SUM}'",shell=True))
 
-#Set paths to qualimap and GATK
+#Set paths to qualimap, picard and GATK
 path_to_qualimap = str('.'.join(check_output('locate qualimap.jar | head -1', shell=True).rstrip('\n').split('.')[0:-1]))
-path_to_gatk = "/Software/GenomeAnalysisTK.jar"
+path_to_gatk = str(args.gatk)
+path_to_picard = str(args.picard)
 
 
 #Set definition to create required directories
@@ -159,8 +161,8 @@ bam_merges = []
 
 def merge_duprm(merge_label,file_string):
 
-	picard_merge= "java -Xmx" + Java_Mem + 'g -jar  /Software/picard.jar MergeSamFiles '
-	picard_duprm="java -Xmx" + Java_Mem + 'g -jar  /Software/picard.jar MarkDuplicates OPTICAL_DUPLICATE_PIXEL_DISTANCE=' + op_dup + ' REMOVE_DUPLICATES=TRUE  I='
+	picard_merge= "java -Xmx" + Java_Mem + 'g -jar  ' + path_to_picard + ' MergeSamFiles '
+	picard_duprm="java -Xmx" + Java_Mem + 'g -jar  ' + path_to_picard + ' MarkDuplicates OPTICAL_DUPLICATE_PIXEL_DISTANCE=' + op_dup + ' REMOVE_DUPLICATES=TRUE  I='
 
 	try:
 		file = open(outdir + "/" + merge_label + infix + '.sorted.grouped.duprm.bam.bai', 'r')

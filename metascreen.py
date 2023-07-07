@@ -84,6 +84,9 @@ parser.add_argument("-th","--threshold",help="Threshold number of reads for Brac
 parser.add_argument("-p7","--p7_fish", help="Fish for exact p7 index matches", default="Y")
 parser.add_argument("-p5","--p5_fish", help="Fish for exact p5 index matches", default="N")
 parser.add_argument("-j","--parallel_jobs",help="Number of jobs to be run in parallel (NOT Kraken)", default=5)
+parser.add_argument("-bracken","--bracken",help="path to bracken", default="/Software/Bracken-2.5/bracken")
+parser.add_argument("-prinseq","--prinseq",help="path to prinseq++", default="/home/iseult/miniconda3/envs/prinseq-pp/bin/prinseq++")
+
 args = parser.parse_args()
 
 threshold = str(args.threshold)
@@ -93,6 +96,8 @@ threads = str(args.threads)
 p7_fish = str(args.p7_fish)
 p5_fish = str(args.p5_fish)
 parallel_jobs = int(args.parallel_jobs)
+path_to_bracken=str(args.bracken)
+path_to_prinseq=str(args.prinseq)
 ## Set name of database: use this to create directory within kraken_output for these assignments
 db_name = db.split('/')[-2]
 
@@ -225,7 +230,6 @@ def bam_to_fq(bamfile, index_fish):
 def dedup(fq):
         outdir = 'filtered_reads/deduped/'
         out_prefix = ".".join(fq.split('/')[-1].split('.')[0:-2]) + ".prinseq"
-        path_to_prinseq = "/home/iseult/miniconda3/envs/prinseq-pp/bin/prinseq++"
         try:
                 f=open(outdir + out_prefix + "_good_out.fastq.gz",'r')
                 print("Fastq " + str(fq) + " already de-duped! Moving on...")
@@ -266,7 +270,7 @@ def bracken(sample):
                 f = open(output + '.bracken','r')
                 print("Bracken already run for " + sample + "! Moving on...")
         except IOError:
-                call("/Software/Bracken-2.5/bracken -d " + db + " -i " + input + " -o " + output + ' -r 65 -t ' + threshold, shell=True)
+                call(path_to_bracken + " -d " + db + " -i " + input + " -o " + output + ' -r 65 -t ' + threshold, shell=True)
 		# move bracken reports to bracken output folder
 		call('mv tax_assignment/kraken_output/' + db_name +'/'+ sample + '*bracken* tax_assignment/bracken_output/' + db_name +'/', shell=True)
 

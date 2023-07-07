@@ -158,7 +158,7 @@ parser.add_argument("-lib","--library",help="Take sample and library ID info fro
 parser.add_argument("-RGCN","--center",help="Sequencing center/institute? [TrinSeq_Dublin_Ireland]",default="TrinSeq_Dublin_Ireland")
 parser.add_argument("-RGPM","--platform",help="Sequencing Platform. This overwrites the defaults set by the PE/SE switch (-end) - NovaSeq for PE and MiSeq for SE ",default="none")
 parser.add_argument("-seqid","--seqid",help="Sequencer unique ID. This is automatically taken from FASTQ read ids unless specificed",default="none")
-
+parser.add_argument("-picard","--picard", help="Path to picard jarfile.", default="/Software/picard.jar")
 ## parse comand line arguments
 args = parser.parse_args()
 user_seq_id = args.seqid
@@ -174,7 +174,7 @@ fish = str(args.index_fish)
 library = str(args.library)
 md = str(args.map_damage)
 un = str(args.unmap)
-
+path_to_picard = str(args.picard)
 #Manual read group arguments
 center = str(args.center)
 platform = str(args.platform)
@@ -569,8 +569,9 @@ fish_bams = sorted([file.replace("pair1.truncated","paired").replace( "fastq.gz"
 
 def merge_duprm(merge_label,file_string):
 	merge_label =  merge_label
-	picard_merge= "java -Xmx" + Java_Mem + 'g -jar  /Software/picard.jar MergeSamFiles '
-	picard_duprm="java -Xmx" + Java_Mem + 'g -jar  /Software/picard.jar MarkDuplicates OPTICAL_DUPLICATE_PIXEL_DISTANCE=' + op_dup + ' REMOVE_DUPLICATES=TRUE  I='
+	picard_merge= "java -Xmx" + Java_Mem + 'g -jar ' + path_to_picard +  ' MergeSamFiles '
+
+	picard_duprm="java -Xmx" + Java_Mem + 'g -jar  ' + path_to_picard + ' MarkDuplicates OPTICAL_DUPLICATE_PIXEL_DISTANCE=' + op_dup + ' REMOVE_DUPLICATES=TRUE  I='
 
 	if fish == "Y" :
 		suffix=".sorted.grouped.fish"
@@ -716,7 +717,7 @@ for i in samples :
                 	print merge_label + " does not require merging and already deduped. Moving on..."
         	except IOError:
                 	print merge_label + " does not require merging. Deduping..."
-			picard_duprm="java -Xmx" + Java_Mem + 'g -jar  /Software/picard.jar MarkDuplicates OPTICAL_DUPLICATE_PIXEL_DISTANCE=' + op_dup +' REMOVE_DUPLICATES=TRUE  I='
+			picard_duprm="java -Xmx" + Java_Mem + 'g -jar  ' + path_to_picard + ' MarkDuplicates OPTICAL_DUPLICATE_PIXEL_DISTANCE=' + op_dup +' REMOVE_DUPLICATES=TRUE  I='
 			call(picard_duprm + merge_label + '.bam O=../merged_bams/' + merge_label + '.duprm.bam M=../merged_bams/' + merge_label + '.duprm.stats 2>../merged_bams/' + merge_label + '.duprm.log',shell = True)
 			call('samtools index ../merged_bams/' + merge_label + '.duprm.bam',shell=True)
 		full_merges.append(merge_label + '.duprm.bam')
