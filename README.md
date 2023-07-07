@@ -12,7 +12,7 @@ Written in python 2.7; assumes cutadapt, AdapterRemoval, samtools, bwa and mapDa
 `BamBams_v6.py`  
 Script to do final BAM merges, duplicate removal, indel realignment, length and MQ filtering and softclipping.  
 `filter_bam.py`  
-Script to filter BAM file for length and MQ as well as softclipping.
+Script to filter BAM file for length and MQ as well as softclipping.  
 `softclip.py`  
 old script for softclipping.
 
